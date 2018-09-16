@@ -58,15 +58,17 @@ router.get('/my', (req, res, next) => {
 
 /**
  * @query {String} toolid
- * @query {String} userid 
+ * @query {String} userid  TEST 生产环境用cookie
  * @TODO userid 添加到 user 的 usedtools 数组中。
  */
 router.get('/pv', (req, res, next) => {
   const { toolid, userid } = req.query
-  ToolModel.update({ toolid }, { '$inc': { pv: 1 } })
+  ToolModel.update({ _id: toolid }, { '$inc': { pv: 1 } })
     .exec((err, data) => {
       if (err) return next(err)
-      res.end()
+      UserModel.addPv(toolid, userid, (err, data) => {
+        res.end()
+      })
     })
 })
 
